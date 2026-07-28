@@ -1,4 +1,4 @@
-import { formatDate } from '../utils/date'
+import { formatDate, parseLocalDate } from '../utils/date'
 
 const GROUP_ORDER = ['Due This Week', 'Due Next 2 Weeks', 'Due This Month', 'Coming Up']
 
@@ -19,7 +19,7 @@ function groupTasks(tasks) {
       continue
     }
 
-    const due = new Date(task.due_date)
+    const due = parseLocalDate(task.due_date)
     const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24))
 
     if (diffDays <= 7) groups['Due This Week'].push(task)

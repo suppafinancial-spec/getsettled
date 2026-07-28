@@ -1,4 +1,4 @@
-import { formatDate } from '../utils/date'
+import { formatDate, parseLocalDate } from '../utils/date'
 
 function MoveTimeline({ moveOutDate, moveInDate }) {
   if (!moveOutDate || !moveInDate) {
@@ -9,8 +9,8 @@ function MoveTimeline({ moveOutDate, moveInDate }) {
     )
   }
 
-  const out = new Date(moveOutDate)
-  const in_ = new Date(moveInDate)
+  const out = parseLocalDate(moveOutDate)
+  const in_ = parseLocalDate(moveInDate)
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
