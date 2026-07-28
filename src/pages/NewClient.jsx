@@ -39,8 +39,8 @@ function NewClient() {
     e.preventDefault()
     setError(null)
 
-    if (new Date(form.moveInDate) <= new Date(form.moveOutDate)) {
-      setError('Move-in date must be after move-out date.')
+    if (new Date(form.moveInDate) < new Date(form.moveOutDate)) {
+      setError('Move-in date must be on or after move-out date.')
       return
     }
 

@@ -16,7 +16,8 @@ function MoveTimeline({ moveOutDate, moveInDate }) {
 
   const total = in_ - out
   const elapsed = today - out
-  const percent = total <= 0 ? 100 : Math.min(100, Math.max(0, (elapsed / total) * 100))
+  const percent =
+    total <= 0 ? (today >= out ? 100 : 0) : Math.min(100, Math.max(0, (elapsed / total) * 100))
 
   return (
     <section className="timeline">
