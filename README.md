@@ -27,17 +27,23 @@ The home page shows a live Supabase connection status check.
 
 ## Database schema
 
-SQL migrations live in `supabase/migrations/`. Apply `20260728000000_initial_schema.sql`
-in the Supabase SQL editor (or via the Supabase CLI) to create the initial tables:
+SQL migrations live in `supabase/migrations/`. Apply them in order in the
+Supabase SQL editor (or via the Supabase CLI):
 
-- `brokerages` — name, tier (small/medium/large), monthly price
-- `agents` — belong to a brokerage
-- `clients` — belong to an agent; move-in/move-out dates and postal codes, persona type, property type
-- `tasks` — belong to a client; task name, due date, status, category
-- `task_events` — log of task creation/completion events
-- `vendors`
-- `postal_code_lookup` — postal code prefix to utility company, ServiceOntario link, school board, and Canada Post forwarding info
+1. `20260728000000_initial_schema.sql` — creates the tables:
+   - `brokerages` — name, tier (small/medium/large), monthly price
+   - `agents` — belong to a brokerage
+   - `clients` — belong to an agent; move-in/move-out dates and postal codes, persona type, property type
+   - `tasks` — belong to a client; task name, due date, status, category
+   - `task_events` — log of task creation/completion events
+   - `vendors`
+   - `postal_code_lookup` — postal code prefix to utility company, ServiceOntario link, school board, and Canada Post forwarding info
 
-Row Level Security is enabled on every table with no policies yet, so the anon
-key currently has no read/write access until policies are added for your
-auth model.
+2. `20260728010000_rls_policies.sql` — adds `user_id` columns to `agents` and
+   `clients` (linked to `auth.users`) and RLS policies:
+   - Agents can SELECT their own brokerage row, and SELECT/UPDATE clients where `agent_id` matches their own agent record.
+   - Clients can SELECT/UPDATE their own client row (by `user_id`), and SELECT their own tasks and task_events (via the client relationship).
+   - `vendors` and `postal_code_lookup` are SELECT-able by any authenticated user; writes to those two are left to the service role.
+
+   Agents currently have no policies on `tasks`/`task_events` — only the
+   client-facing access above was specified.
