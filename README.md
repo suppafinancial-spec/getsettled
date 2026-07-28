@@ -50,6 +50,10 @@ Supabase SQL editor (or via the Supabase CLI):
    `agent_id` matches their own agent record. Agents cannot UPDATE or DELETE
    tasks/task_events; status changes come from the client or the system.
 
+4. `20260728030000_auth_signup_trigger.sql` — adds a trigger on `auth.users`
+   that creates the matching `agents`/`clients` row when someone signs up
+   (see Auth below).
+
 ### Applying migrations
 
 This environment cannot reach Supabase (network policy blocks both the
@@ -64,3 +68,35 @@ npx supabase db push
 ```
 
 Or paste each file's contents into the Supabase SQL editor in order.
+
+## Auth
+
+Email/password auth via Supabase Auth, with separate signup/login flows for
+agents (`/agent`) and clients (`/client`). On signup, the form passes
+`role`, `name`, and a linking id (`brokerage_id` for agents, `agent_id` for
+clients) as auth user metadata; the `on_auth_user_created` trigger reads that
+metadata and inserts the corresponding `agents`/`clients` row. After login,
+`/agent-dashboard` and `/client-dashboard` are placeholder pages guarded by
+role — a route redirects home if the logged-in user has no matching row in
+that table.
+
+Two things to know before testing signup:
+
+- **No picker UI yet for Brokerage ID / Agent ID** — the signup forms just
+  take a raw UUID pasted in. Before testing agent signup, create a test
+  brokerage in the SQL editor and copy its id:
+  ```sql
+  insert into public.brokerages (name, tier, monthly_price)
+  values ('Test Brokerage', 'small', 99.00)
+  returning id;
+  ```
+  Then after a test agent signs up, find their id in Table Editor → `agents`
+  to use as the Agent ID when testing client signup.
+
+- **Email confirmation** — if your Supabase project has "Confirm email"
+  enabled (Authentication → Providers → Email), signup won't return a
+  session immediately, so login is blocked until the email is confirmed. The
+  `agents`/`clients` row is still created right away (the trigger fires on
+  user creation, not confirmation) — only login is gated. For local testing
+  without email set up, you can turn "Confirm email" off in that same
+  settings page, or manually confirm the user from Authentication → Users.

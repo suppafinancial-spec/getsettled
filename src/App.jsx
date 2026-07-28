@@ -1,41 +1,35 @@
-import { useEffect, useState } from 'react'
-import { supabase } from './supabaseClient'
+import { Routes, Route } from 'react-router-dom'
+import Home from './pages/Home'
+import AgentAuth from './pages/AgentAuth'
+import ClientAuth from './pages/ClientAuth'
+import AgentDashboard from './pages/AgentDashboard'
+import ClientDashboard from './pages/ClientDashboard'
+import { RequireRole } from './components/RequireRole'
 import './App.css'
 
 function App() {
-  const [status, setStatus] = useState('checking')
-  const [error, setError] = useState(null)
-
-  useEffect(() => {
-    let cancelled = false
-
-    async function checkConnection() {
-      const { error } = await supabase
-        .from('brokerages')
-        .select('id', { count: 'exact', head: true })
-
-      if (cancelled) return
-
-      if (error) {
-        setStatus('error')
-        setError(error.message)
-      } else {
-        setStatus('connected')
-      }
-    }
-
-    checkConnection()
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
   return (
-    <section id="center">
-      <h1>GetSettled</h1>
-      <p>Supabase connection status: <strong>{status}</strong></p>
-      {error && <p className="error">{error}</p>}
-    </section>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/agent" element={<AgentAuth />} />
+      <Route path="/client" element={<ClientAuth />} />
+      <Route
+        path="/agent-dashboard"
+        element={
+          <RequireRole role="agent">
+            <AgentDashboard />
+          </RequireRole>
+        }
+      />
+      <Route
+        path="/client-dashboard"
+        element={
+          <RequireRole role="client">
+            <ClientDashboard />
+          </RequireRole>
+        }
+      />
+    </Routes>
   )
 }
 

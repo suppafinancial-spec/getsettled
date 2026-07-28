@@ -1,0 +1,42 @@
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { supabase } from '../supabaseClient'
+import { useAuth } from '../context/AuthContext'
+
+function ClientDashboard() {
+  const { session } = useAuth()
+  const [profile, setProfile] = useState(null)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!session) return
+    supabase
+      .from('clients')
+      .select('name, email, agent_id')
+      .eq('user_id', session.user.id)
+      .maybeSingle()
+      .then(({ data }) => setProfile(data))
+  }, [session])
+
+  async function handleLogout() {
+    await supabase.auth.signOut()
+    navigate('/')
+  }
+
+  return (
+    <section id="center">
+      <h1>Client Dashboard</h1>
+      <p>Logged in as {session?.user?.email}</p>
+      {profile && (
+        <p>
+          {profile.name} — agent {profile.agent_id}
+        </p>
+      )}
+      <button type="button" onClick={handleLogout}>
+        Log out
+      </button>
+    </section>
+  )
+}
+
+export default ClientDashboard
