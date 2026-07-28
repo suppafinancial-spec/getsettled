@@ -45,5 +45,22 @@ Supabase SQL editor (or via the Supabase CLI):
    - Clients can SELECT/UPDATE their own client row (by `user_id`), and SELECT their own tasks and task_events (via the client relationship).
    - `vendors` and `postal_code_lookup` are SELECT-able by any authenticated user; writes to those two are left to the service role.
 
-   Agents currently have no policies on `tasks`/`task_events` — only the
-   client-facing access above was specified.
+3. `20260728020000_agent_task_select_policies.sql` — adds SELECT-only
+   policies so agents can view `tasks`/`task_events` for clients where
+   `agent_id` matches their own agent record. Agents cannot UPDATE or DELETE
+   tasks/task_events; status changes come from the client or the system.
+
+### Applying migrations
+
+This environment cannot reach Supabase (network policy blocks both the
+project host and the management API, and raw Postgres connections aren't
+proxied), so `supabase link` / `supabase db push` can't be run from here.
+Apply migrations yourself, in order, from a machine with network access:
+
+```sh
+npx supabase login
+npx supabase link --project-ref yeqjqqctijawnkqfbicj
+npx supabase db push
+```
+
+Or paste each file's contents into the Supabase SQL editor in order.
