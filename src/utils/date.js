@@ -13,3 +13,18 @@ export function formatDate(dateStr) {
     year: 'numeric',
   })
 }
+
+export function toDateInputValue(date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+// Add (or subtract, for negative days) days to a 'YYYY-MM-DD' string,
+// returning a new 'YYYY-MM-DD' string.
+export function addDays(dateStr, days) {
+  const date = parseLocalDate(dateStr)
+  date.setDate(date.getDate() + days)
+  return toDateInputValue(date)
+}

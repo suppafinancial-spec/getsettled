@@ -21,9 +21,18 @@
   max-width: 320px;
 }
 
-.auth-form input {
+.auth-form input,
+.auth-form select {
   padding: 8px 10px;
   font-size: 14px;
+}
+
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  text-align: left;
 }
 
 .home-links {

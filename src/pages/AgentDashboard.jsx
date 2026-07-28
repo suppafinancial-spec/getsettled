@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { useAuth } from '../context/AuthContext'
 
@@ -32,6 +32,7 @@ function AgentDashboard() {
           {profile.name} — brokerage {profile.brokerage_id}
         </p>
       )}
+      <Link to="/agent/new-client">+ Add New Client</Link>
       <button type="button" onClick={handleLogout}>
         Log out
       </button>

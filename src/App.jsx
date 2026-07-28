@@ -4,6 +4,8 @@ import AgentAuth from './pages/AgentAuth'
 import ClientAuth from './pages/ClientAuth'
 import AgentDashboard from './pages/AgentDashboard'
 import ClientDashboard from './pages/ClientDashboard'
+import NewClient from './pages/NewClient'
+import ClientDetail from './pages/ClientDetail'
 import { RequireRole } from './components/RequireRole'
 import './App.css'
 
@@ -18,6 +20,22 @@ function App() {
         element={
           <RequireRole role="agent">
             <AgentDashboard />
+          </RequireRole>
+        }
+      />
+      <Route
+        path="/agent/new-client"
+        element={
+          <RequireRole role="agent">
+            <NewClient />
+          </RequireRole>
+        }
+      />
+      <Route
+        path="/agent/clients/:clientId"
+        element={
+          <RequireRole role="agent">
+            <ClientDetail />
           </RequireRole>
         }
       />
